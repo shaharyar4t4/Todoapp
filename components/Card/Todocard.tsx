@@ -1,4 +1,5 @@
 import { ITodoItem } from '@/app/Screens/Home';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import moment from 'moment';
@@ -17,7 +18,13 @@ const Todocard = ({ item }: Iprop) => {
                     <FontAwesome6 name="file-text" size={25} color="#194A66" />
                 </View>
             case 'goal':
-
+                return <View style={[styles.iconContainer, { backgroundColor: "#FEF5D3" }]}>
+                     <AntDesign name="Trophy" size={25} color="#403100" />
+                </View>
+            case 'event':
+                return <View style={[styles.iconContainer, { backgroundColor: "#E7E2F3" }]}>
+                    <MaterialIcons name="event" size={25} color="#4A3780" />
+                </View>
             default:
                 return <View style={[styles.iconContainer, { backgroundColor: "#DBECF6" }]}>
                     <FontAwesome6 name="file-text" size={25} color="#194A66" />

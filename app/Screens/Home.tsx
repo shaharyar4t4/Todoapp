@@ -1,7 +1,5 @@
 import Todocard from '@/components/Card/Todocard';
 import PageLayout from '@/components/Layouts/MainLayout';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import React from 'react';
@@ -197,7 +195,7 @@ const Home = (props: propsType) => {
                                 data={todos}
                                 keyExtractor={(item) => item.id.toString()}
                                 renderItem={({ item }) =>
-                                   <Todocard item={item} />
+                                    <Todocard item={item} />
                                 }
 
                             />
@@ -222,30 +220,7 @@ const Home = (props: propsType) => {
                                 data={todos}
                                 keyExtractor={(item) => item.id.toString()}
                                 renderItem={({ item }) =>
-                                    <View style={ { borderBottomWidth: .3 }}>
-                                        <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-                                            <View style={ { backgroundColor: "#DBECF6" }}>
-                                                <FontAwesome6 name="file-text" size={25} color="#194A66" />
-                                            </View>
-                                            <View>
-                                                <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
-                                                    <Text >{item.title}</Text>
-
-                                                </View>
-                                                <View style={{ flexDirection: "row", gap: 10, marginTop: 0 }}>
-                                                    <Text >{moment(item.date).format("MMMM DD, YYYY")}</Text>
-
-                                                    <Text>{moment(item.time).format("h:mm A")}</Text>
-                                                </View>
-                                            </View>
-                                        </View>
-                                        <View>
-                                            <TouchableOpacity >
-                                                <MaterialIcons name="check-box-outline-blank" size={24} color="black" />
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-
+                                    <Todocard item={item} />
                                 }
                             />
                         </View>
@@ -282,7 +257,7 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         // height:300
     },
-   
+
     btn: {
         backgroundColor: "#4A3780",
         position: "absolute",
@@ -316,5 +291,5 @@ const styles = StyleSheet.create({
     // time: {
     //     fontSize: 14
     // },
-   
+
 })
