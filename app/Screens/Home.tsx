@@ -192,7 +192,7 @@ const Home = (props: propsType) => {
 
                         <View style={styles.todoContainer}>
                             <FlatList
-                                data={todos}
+                                data={todos?.filter(x => x?.completed ==false)}
                                 keyExtractor={(item) => item.id.toString()}
                                 renderItem={({ item }) =>
                                     <Todocard item={item} />
@@ -217,7 +217,7 @@ const Home = (props: propsType) => {
 
                         <View style={styles.todoContainer}>
                             <FlatList
-                                data={todos}
+                                data={todos?.filter(x => x?.completed)}
                                 keyExtractor={(item) => item.id.toString()}
                                 renderItem={({ item }) =>
                                     <Todocard item={item} />

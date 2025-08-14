@@ -19,7 +19,7 @@ const Todocard = ({ item }: Iprop) => {
                 </View>
             case 'goal':
                 return <View style={[styles.iconContainer, { backgroundColor: "#FEF5D3" }]}>
-                     <AntDesign name="Trophy" size={25} color="#403100" />
+                    <AntDesign name="Trophy" size={25} color="#403100" />
                 </View>
             case 'event':
                 return <View style={[styles.iconContainer, { backgroundColor: "#E7E2F3" }]}>
@@ -34,9 +34,9 @@ const Todocard = ({ item }: Iprop) => {
 
     return (
         <View>
-            <View style={[styles.todoItem, { borderBottomWidth: .3 }]}>
+            <View style={[styles.todoItem, { borderBottomWidth: .3, opacity: item?.completed ? 0.5 : 1 }]}>
                 <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-                  {renderIcon(item?.category)}
+                    {renderIcon(item?.category)}
                     <View>
                         <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
                             <Text style={[styles.title]}>{item.title}</Text>
@@ -49,9 +49,18 @@ const Todocard = ({ item }: Iprop) => {
                     </View>
                 </View>
                 <View>
-                    <TouchableOpacity >
-                        <MaterialIcons name="check-box-outline-blank" size={24} color="black" />
-                    </TouchableOpacity>
+                    {
+                        item.completed ?
+                            <TouchableOpacity >
+                                <MaterialIcons name="check-box" size={24} color="#4A3780" />
+                            </TouchableOpacity> :
+                            <TouchableOpacity >
+                                <MaterialIcons name="check-box-outline-blank" size={24} color="black" />
+                            </TouchableOpacity>
+
+
+                    }
+
                 </View>
             </View>
         </View>
