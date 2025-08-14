@@ -1,3 +1,4 @@
+import Todocard from '@/components/Card/Todocard';
 import PageLayout from '@/components/Layouts/MainLayout';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -196,30 +197,7 @@ const Home = (props: propsType) => {
                                 data={todos}
                                 keyExtractor={(item) => item.id.toString()}
                                 renderItem={({ item }) =>
-                                    <View style={[styles.todoItem, { borderBottomWidth: .3 }]}>
-                                        <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-                                            <View style={[styles.iconContainer, { backgroundColor: "#DBECF6" }]}>
-                                                <FontAwesome6 name="file-text" size={25} color="#194A66" />
-                                            </View>
-                                            <View>
-                                                <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
-                                                    <Text style={[styles.title]}>{item.title}</Text>
-
-                                                </View>
-                                                <View style={{ flexDirection: "row", gap: 10, marginTop: 0 }}>
-                                                    <Text style={[styles.time]}>{moment(item.date).format("MMMM DD, YYYY")}</Text>
-
-                                                    <Text style={[styles.time]}>{moment(item.time).format("h:mm A")}</Text>
-                                                </View>
-                                            </View>
-                                        </View>
-                                        <View>
-                                            <TouchableOpacity >
-                                                <MaterialIcons name="check-box-outline-blank" size={24} color="black" />
-                                            </TouchableOpacity>
-                                        </View>
-                                    </View>
-
+                                   <Todocard item={item} />
                                 }
 
                             />
@@ -244,20 +222,20 @@ const Home = (props: propsType) => {
                                 data={todos}
                                 keyExtractor={(item) => item.id.toString()}
                                 renderItem={({ item }) =>
-                                    <View style={[styles.todoItem, { borderBottomWidth: .3 }]}>
+                                    <View style={ { borderBottomWidth: .3 }}>
                                         <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
-                                            <View style={[styles.iconContainer, { backgroundColor: "#DBECF6" }]}>
+                                            <View style={ { backgroundColor: "#DBECF6" }}>
                                                 <FontAwesome6 name="file-text" size={25} color="#194A66" />
                                             </View>
                                             <View>
                                                 <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
-                                                    <Text style={[styles.title]}>{item.title}</Text>
+                                                    <Text >{item.title}</Text>
 
                                                 </View>
                                                 <View style={{ flexDirection: "row", gap: 10, marginTop: 0 }}>
-                                                    <Text style={[styles.time]}>{moment(item.date).format("MMMM DD, YYYY")}</Text>
+                                                    <Text >{moment(item.date).format("MMMM DD, YYYY")}</Text>
 
-                                                    <Text style={[styles.time]}>{moment(item.time).format("h:mm A")}</Text>
+                                                    <Text>{moment(item.time).format("h:mm A")}</Text>
                                                 </View>
                                             </View>
                                         </View>
@@ -304,21 +282,7 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         // height:300
     },
-    todoItem: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: 18,
-
-        borderBottomColor: "#c4c4c4"
-    },
-    iconContainer: {
-        width: 50, height: 50, borderRadius: "50%", alignItems: "center", justifyContent: "center",
-    },
-    title: {
-        fontWeight: "bold",
-        fontSize: 16
-    },
+   
     btn: {
         backgroundColor: "#4A3780",
         position: "absolute",
@@ -334,7 +298,23 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold"
     },
-    time: {
-        fontSize: 14
-    },
+    //    todoItem: {
+    //     flexDirection: "row",
+    //     alignItems: "center",
+    //     justifyContent: "space-between",
+    //     padding: 18,
+
+    //     borderBottomColor: "#c4c4c4"
+    // },
+    //  iconContainer: {
+    //     width: 50, height: 50, borderRadius: "50%", alignItems: "center", justifyContent: "center",
+    // },
+    // title: {
+    //     fontWeight: "bold",
+    //     fontSize: 16
+    // },
+    // time: {
+    //     fontSize: 14
+    // },
+   
 })
