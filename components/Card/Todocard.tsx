@@ -39,12 +39,12 @@ const Todocard = ({ item }: Iprop) => {
                     {renderIcon(item?.category)}
                     <View>
                         <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
-                            <Text style={[styles.title]}>{item.title}</Text>
+                            <Text style={[styles.title, item?.completed ? styles.disableline : {}]}>{item.title}</Text>
                         </View>
                         <View style={{ flexDirection: "row", gap: 10, marginTop: 0 }}>
-                            <Text style={[styles.time]}>{moment(item.date).format("MMMM DD, YYYY")}</Text>
+                            <Text style={[styles.time, item?.completed ? styles.disableline : {}]}>{moment(item.date).format("MMMM DD, YYYY")}</Text>
 
-                            <Text style={[styles.time]}>{moment(item.time).format("h:mm A")}</Text>
+                            <Text style={[styles.time, item?.completed ? styles.disableline : {}]}>{moment(item.time).format("h:mm A")}</Text>
                         </View>
                     </View>
                 </View>
@@ -57,8 +57,6 @@ const Todocard = ({ item }: Iprop) => {
                             <TouchableOpacity >
                                 <MaterialIcons name="check-box-outline-blank" size={24} color="black" />
                             </TouchableOpacity>
-
-
                     }
 
                 </View>
@@ -88,5 +86,9 @@ const styles = StyleSheet.create({
     time: {
         fontSize: 14
     },
+    disableline:{
+        color: "#c4c4c4",
+        textDecorationLine: "line-through"
+    }
 
 });
