@@ -4,6 +4,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import moment from 'moment';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { IStackScreen } from '../Navigations/Stack/AllScreen';
@@ -87,15 +88,31 @@ const AddTask = (props: propsType) => {
                     </View>
 
                     {/*for the date and time*/}
-                       <View style={{ flexDirection: "row", justifyContent: "space-between",  paddingVertical: 20 }}>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 20 }}>
                         <View >
                             <Text style={styles.label}>Date</Text>
+                            <View style={styles.customStyle}>
+                                <Text style={styles.customText}>{moment(fields?.date).format("MM/DD/YYYY")}</Text>
+
+                                <TouchableOpacity>
+                                    <Entypo name="calendar" size={20} color="#4A3780" />
+
+                                </TouchableOpacity>
+                            </View>
                         </View>
                         <View>
                             <Text style={styles.label}>Time</Text>
-                            
+                            <View style={styles.customStyle}>
+                                <Text style={styles.customText}>{moment(fields?.date).format("MM/DD/YYYY")}</Text>
+                                <TouchableOpacity>
+                                    <AntDesign name="clockcircleo" size={20} color="#4A3780" />
+
+
+                                </TouchableOpacity>
+
+                            </View>
                         </View>
-                        </View>
+                    </View>
 
                     {/*for the notes */}
                     <View>
@@ -161,6 +178,23 @@ const styles = StyleSheet.create({
         color: "#fff",
         fontSize: 16,
         fontWeight: "bold"
+    },
+
+    customStyle: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        borderWidth: .6,
+        borderColor: "#c4c4c4",
+        padding: 12,
+        marginTop: 10,
+        borderRadius: 4,
+        backgroundColor: "#fff",
+        gap: 10,
+    },
+    customText: {
+        fontSize: 16,
+        color: "#000"
     }
 
 })
