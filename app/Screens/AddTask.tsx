@@ -22,7 +22,7 @@ const AddTask = (props: propsType) => {
     const { navigation } = props;
     const [fields, setFields] = useState<Ifield>({
         title: "",
-        category: "goal",
+        category: "notes",
         notes: "",
         date: new Date(),
         time: new Date(),
@@ -85,6 +85,18 @@ const AddTask = (props: propsType) => {
                             <MaterialIcons name="event" size={25} color="#4A3780" />
                         </TouchableOpacity>
                     </View>
+
+                    {/*for the date and time*/}
+                       <View style={{ flexDirection: "row", justifyContent: "space-between",  paddingVertical: 20 }}>
+                        <View >
+                            <Text style={styles.label}>Date</Text>
+                        </View>
+                        <View>
+                            <Text style={styles.label}>Time</Text>
+                            
+                        </View>
+                        </View>
+
                     {/*for the notes */}
                     <View>
                         <Text style={styles.label}>Notes</Text>
@@ -93,15 +105,17 @@ const AddTask = (props: propsType) => {
                             placeholderTextColor="grey"
                             multiline
                             numberOfLines={5}
+                            value={fields.notes}
+                            onChangeText={(text) => handleChange('notes', text)}
                         />
                     </View>
-
                 </View>
             </ScrollView>
             <TouchableOpacity style={styles.btn}>
                 <Text style={styles.btnText}>{"Save"}</Text>
             </TouchableOpacity>
         </MainLayout>
+
     )
 }
 
