@@ -35,7 +35,18 @@ const AddTask = (props: propsType) => {
     }
     const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
     const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
-
+    const handleDateChange = (event:any, selectedDate?: Date) =>{
+        if(selectedDate){
+            setFields((prev) => ({ ...prev, date: selectedDate }));
+        }
+        setShowDatePicker(false);
+    }
+      const handleTimeChange = (event:any, selectedTime?:Date) =>{
+        if(selectedTime){
+            setFields((prev) => ({ ...prev, date: selectedTime }));
+        }
+        setShowTimePicker(false);
+    }
     console.log(fields, ",<--payload");
 
     return (
@@ -86,14 +97,17 @@ const AddTask = (props: propsType) => {
                             showDatePicker && <DateTimePicker
                             mode='date'
                             display='default'
-                            value={fields.date} />
+                            value={fields.date} 
+                            onChange ={handleDateChange}
+
+                            />
                         }
 
                         {/*only for Time Picker*/}
                         <View>
                             <Text style={styles.label}>Time</Text>
                             <View style={styles.customStyle}>
-                                <Text style={styles.customText}>{moment(fields?.date).format("hh: mm A")}</Text>
+                                <Text style={styles.customText}>{moment(fields?.time).format("hh: mm A")}</Text>
                                 <TouchableOpacity onPress={() => setShowTimePicker(true)}>
                                     <AntDesign name="clockcircleo" size={20} color="#4A3780" />
                                 </TouchableOpacity>
@@ -105,7 +119,10 @@ const AddTask = (props: propsType) => {
                           <DateTimePicker
                             mode='time'
                             display='default'
-                            value={fields.date} />
+                            value={fields.date} 
+                            onChange ={handleTimeChange}
+                            />
+                            
                         }
 
                     </View>
