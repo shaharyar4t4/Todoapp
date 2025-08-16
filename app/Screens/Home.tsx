@@ -3,8 +3,8 @@ import PageLayout from '@/components/Layouts/MainLayout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import React, { useEffect } from 'react';
-import { Dimensions, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Dimensions, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IStackScreen } from '../Navigations/Stack/AllScreen';
 
 type propsType = NativeStackScreenProps<IStackScreen, "Home">
@@ -13,11 +13,12 @@ export interface ITodoItem {
     id: number;
     title: string;
     category: string;
-    date: string;
-    time: string;
+    date: string | Date;
+    time: string | Date;
     notes: string;
     completed: boolean;
 }
+
 
 const data = [
     {
@@ -170,12 +171,12 @@ const Home = (props: propsType) => {
     const { navigation } = props;
     const { width, height } = Dimensions.get('window');
     const [todos, setTodos] = React.useState<ITodoItem[]>(data);
-
+    const [selectTodoID, setSelectTodoID] = useState<number[]>([]);
 
     // it is a hook in React Native "Working is only run at first time"
     useEffect(() => {
         getTodoData();
-    })
+    }, [])
 
     // get the todo data from the local storage
     const getTodoData = async () => {
@@ -183,6 +184,32 @@ const Home = (props: propsType) => {
         data = data ? JSON.parse(data) : [];
         setTodos(data);
     }
+
+    const handleSelect = (id: number) => {
+        if (selectTodoID.includes(id)) {
+            setSelectTodoID(selectTodoID.filter(x => x !== id));
+        }
+        else {
+            setSelectTodoID([...selectTodoID, id]);
+        }
+    }
+
+    const handlecompleteTask = async () => {
+        if (selectTodoID?.length) {
+            let todoCopy = [...todos];
+            let updated = todoCopy.map((item) => selectTodoID.includes(item.id) ? { ...item, completed: true } : item)
+            await AsyncStorage.setItem("todoItem", JSON.stringify(updated));
+            Alert.alert("Success", `${selectTodoID.length} tasks marked as completed`);
+            setTodos(updated)
+            setSelectTodoID([]);
+        }
+    }
+    const handleClearAll = async () => {
+        let updated = todos.filter(item => !item.completed); // sirf uncompleted rakhega
+        await AsyncStorage.setItem("todoItem", JSON.stringify(updated));
+        setTodos(updated);
+        Alert.alert("Success", "All completed tasks cleared!");
+    };
 
 
 
@@ -209,7 +236,7 @@ const Home = (props: propsType) => {
                                 data={todos?.filter(x => x?.completed == false)}
                                 keyExtractor={(item) => item.id.toString()}
                                 renderItem={({ item }) =>
-                                    <Todocard item={item} />
+                                    <Todocard item={item} selectTodoID={selectTodoID} handleSelect={handleSelect} />
                                 }
 
                             />
@@ -221,8 +248,8 @@ const Home = (props: propsType) => {
                             <Text style={{ fontWeight: "bold", fontSize: 16, letterSpacing: .6, }}>
                                 Completed
                             </Text>
-                            <TouchableOpacity >
-                                <Text style={{ fontSize: 16, color: "red" }}>
+                            <TouchableOpacity onPress={handleClearAll} disabled={todos.filter(x => x.completed).length === 0}>
+                                <Text style={{ fontSize: 16, color: todos.filter(x => x.completed).length === 0 ? "gray" : "red" }}>
                                     Clear All
                                 </Text>
                             </TouchableOpacity>
@@ -243,10 +270,13 @@ const Home = (props: propsType) => {
                 </View>
             </ScrollView>
             {
-
-                <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("AddTask")}>
-                    <Text style={styles.btnText}>Add New Task</Text>
-                </TouchableOpacity>
+                selectTodoID.length > 0
+                    ? <TouchableOpacity style={styles.btn} onPress={handlecompleteTask}>
+                        <Text style={styles.btnText}>Mark as a Complete</Text>
+                    </TouchableOpacity>
+                    : <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("AddTask")}>
+                        <Text style={styles.btnText}>Add New Task</Text>
+                    </TouchableOpacity>
             }
 
         </PageLayout>

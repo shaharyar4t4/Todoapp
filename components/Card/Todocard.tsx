@@ -7,10 +7,13 @@ import React, { PropsWithChildren } from 'react';
 import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type Iprop = PropsWithChildren<{
-    item: ITodoItem
+    item: ITodoItem,
+    selectTodoID?: number[],
+    handleSelect?: (id: number) => void
+
 }>
 
-const Todocard = ({ item }: Iprop) => {
+const Todocard = ({ item, handleSelect, selectTodoID }: Iprop) => {
     const renderIcon = (key: string): React.ReactElement => {
         switch (key) {
             case 'file':
@@ -62,8 +65,12 @@ const Todocard = ({ item }: Iprop) => {
                             <TouchableOpacity >
                                 <MaterialIcons name="check-box" size={24} color="#4A3780" />
                             </TouchableOpacity> :
-                            <TouchableOpacity >
-                                <MaterialIcons name="check-box-outline-blank" size={24} color="black" />
+                            <TouchableOpacity onPress={()=> handleSelect && handleSelect(item?.id)}>
+                                {
+                                    selectTodoID?.includes(item.id) ?
+                                        <MaterialIcons name="check-box" size={24} color="#4A3780" /> :
+                                        <MaterialIcons name="check-box-outline-blank" size={24} color="#4A3780" />
+                                }
                             </TouchableOpacity>
                     }
 
