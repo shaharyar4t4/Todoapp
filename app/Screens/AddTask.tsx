@@ -3,6 +3,7 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import React, { useState } from 'react';
@@ -32,6 +33,9 @@ const AddTask = (props: propsType) => {
         setFields((prev => ({ ...prev, [key]: value }))
         );
     }
+    const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+    const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
+
     console.log(fields, ",<--payload");
 
     return (
@@ -62,6 +66,49 @@ const AddTask = (props: propsType) => {
                             onChangeText={(text) => handleChange('title', text)}
                         />
                     </View>
+
+
+                    {/*for the date and time*/}
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 20 }}>
+                        <View >
+                            <Text style={styles.label}>Date</Text>
+                            <View style={styles.customStyle}>
+                                <Text style={styles.customText}>{moment(fields?.date).format("MM/DD/YYYY")}</Text>
+
+                                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                                    <Entypo name="calendar" size={20} color="#4A3780" />
+
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        {
+                            showDatePicker && <DateTimePicker
+                            mode='date'
+                            display='default'
+                            value={fields.date} />
+                        }
+                        
+                        <View>
+                            <Text style={styles.label}>Time</Text>
+                            <View style={styles.customStyle}>
+                                <Text style={styles.customText}>{moment(fields?.date).format("hh: mm A")}</Text>
+                                <TouchableOpacity onPress={() => setShowTimePicker(true)}>
+                                    <AntDesign name="clockcircleo" size={20} color="#4A3780" />
+                                </TouchableOpacity>
+
+                            </View>
+                        </View>
+                        {
+                            showTimePicker &&
+                          <DateTimePicker
+                            mode='time'
+                            display='default'
+                            value={fields.date} />
+                        }
+                        
+
+                    </View>
+
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
 
                         {/*for the categroy */}
@@ -85,33 +132,6 @@ const AddTask = (props: propsType) => {
                             style={[styles.iconContainer, { backgroundColor: "#E7E2F3", borderWidth: 3, borderColor: fields.category === "event" ? "#4A3780" : "#fff" }]}>
                             <MaterialIcons name="event" size={25} color="#4A3780" />
                         </TouchableOpacity>
-                    </View>
-
-                    {/*for the date and time*/}
-                    <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 20 }}>
-                        <View >
-                            <Text style={styles.label}>Date</Text>
-                            <View style={styles.customStyle}>
-                                <Text style={styles.customText}>{moment(fields?.date).format("MM/DD/YYYY")}</Text>
-
-                                <TouchableOpacity>
-                                    <Entypo name="calendar" size={20} color="#4A3780" />
-
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <View>
-                            <Text style={styles.label}>Time</Text>
-                            <View style={styles.customStyle}>
-                                <Text style={styles.customText}>{moment(fields?.date).format("MM/DD/YYYY")}</Text>
-                                <TouchableOpacity>
-                                    <AntDesign name="clockcircleo" size={20} color="#4A3780" />
-
-
-                                </TouchableOpacity>
-
-                            </View>
-                        </View>
                     </View>
 
                     {/*for the notes */}
@@ -190,6 +210,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         borderRadius: 4,
         backgroundColor: "#fff",
+        flex: 1,
         gap: 10,
     },
     customText: {
