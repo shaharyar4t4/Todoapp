@@ -4,7 +4,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import moment from 'moment';
 import React, { PropsWithChildren } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 type Iprop = PropsWithChildren<{
     item: ITodoItem
@@ -40,6 +40,14 @@ const Todocard = ({ item }: Iprop) => {
                     <View>
                         <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
                             <Text style={[styles.title, item?.completed ? styles.disableline : {}]}>{item.title}</Text>
+                            {
+                                item?.notes && 
+                                <TouchableOpacity onPress={() => { Alert.alert("Notes", item.notes) }}>
+                                    <MaterialIcons name="speaker-notes" size={24} color="#4A3780" />
+                                </TouchableOpacity>
+                                
+                            }
+
                         </View>
                         <View style={{ flexDirection: "row", gap: 10, marginTop: 0 }}>
                             <Text style={[styles.time, item?.completed ? styles.disableline : {}]}>{moment(item.date).format("MMMM DD, YYYY")}</Text>
@@ -86,7 +94,7 @@ const styles = StyleSheet.create({
     time: {
         fontSize: 14
     },
-    disableline:{
+    disableline: {
         color: "#c4c4c4",
         textDecorationLine: "line-through"
     }

@@ -49,6 +49,9 @@ const AddTask = (props: propsType) => {
         setShowTimePicker(false);
     }
     console.log(fields, ",<--payload");
+
+
+    // save the data in the local storage
     // show the data which is entered by the user
     const handleSave = async () => {
         if(!fields.title){
@@ -67,7 +70,7 @@ const AddTask = (props: propsType) => {
             time: fields.time,
             completed: false,
         }
-        todoItem.push(newTodoItem);
+        todoItem.unshift(newTodoItem);
 
         await AsyncStorage.setItem("todoItem", JSON.stringify(todoItem));
         navigation.navigate("Home");

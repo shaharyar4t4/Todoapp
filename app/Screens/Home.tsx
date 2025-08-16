@@ -1,8 +1,9 @@
 import Todocard from '@/components/Card/Todocard';
 import PageLayout from '@/components/Layouts/MainLayout';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Dimensions, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { IStackScreen } from '../Navigations/Stack/AllScreen';
 
@@ -171,6 +172,19 @@ const Home = (props: propsType) => {
     const [todos, setTodos] = React.useState<ITodoItem[]>(data);
 
 
+    // it is a hook in React Native "Working is only run at first time"
+    useEffect(() => {
+        getTodoData();
+    })
+
+    // get the todo data from the local storage
+    const getTodoData = async () => {
+        let data: any = await AsyncStorage.getItem("todoItem")
+        data = data ? JSON.parse(data) : [];
+        setTodos(data);
+    }
+
+
 
     return (
         <PageLayout>
@@ -192,7 +206,7 @@ const Home = (props: propsType) => {
 
                         <View style={styles.todoContainer}>
                             <FlatList
-                                data={todos?.filter(x => x?.completed ==false)}
+                                data={todos?.filter(x => x?.completed == false)}
                                 keyExtractor={(item) => item.id.toString()}
                                 renderItem={({ item }) =>
                                     <Todocard item={item} />
@@ -261,7 +275,7 @@ const styles = StyleSheet.create({
     btn: {
         backgroundColor: "#4A3780",
         position: "absolute",
-        bottom: 45,
+        bottom: 60,
         left: 15,
         right: 15,
         paddingVertical: 15,
