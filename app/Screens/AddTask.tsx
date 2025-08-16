@@ -44,13 +44,12 @@ const AddTask = (props: propsType) => {
     }
       const handleTimeChange = (event:any, selectedTime?:Date) =>{
         if(selectedTime){
-            setFields((prev) => ({ ...prev, date: selectedTime }));
+            setFields((prev) => ({ ...prev, time: selectedTime }));
         }
         setShowTimePicker(false);
     }
-    // show the data which is entered by the user
     console.log(fields, ",<--payload");
-    
+    // show the data which is entered by the user
     const handleSave = async () => {
         if(!fields.title){
             Alert.alert("Error", "Please enter a title for the task");
@@ -71,8 +70,10 @@ const AddTask = (props: propsType) => {
         todoItem.push(newTodoItem);
 
         await AsyncStorage.setItem("todoItem", JSON.stringify(todoItem));
+        navigation.navigate("Home");
         
     }
+    
     return (
         <MainLayout>
             <View
