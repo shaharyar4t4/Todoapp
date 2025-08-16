@@ -3,11 +3,12 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { IStackScreen } from '../Navigations/Stack/AllScreen';
 
 export interface Ifield {
@@ -47,8 +48,31 @@ const AddTask = (props: propsType) => {
         }
         setShowTimePicker(false);
     }
+    // show the data which is entered by the user
     console.log(fields, ",<--payload");
+    
+    const handleSave = async () => {
+        if(!fields.title){
+            Alert.alert("Error", "Please enter a title for the task");
+            return;
+        }
+        let todoItem:any = await AsyncStorage.getItem("todoItem");
+        todoItem = todoItem ? JSON.parse(todoItem) : [];
 
+        let newTodoItem = {
+            id:todoItem?.length +1,
+            title: fields.title,
+            category: fields.category,
+            notes: fields.notes,
+            date: fields.date,
+            time: fields.time,
+            completed: false,
+        }
+        todoItem.push(newTodoItem);
+
+        await AsyncStorage.setItem("todoItem", JSON.stringify(todoItem));
+        
+    }
     return (
         <MainLayout>
             <View
@@ -166,7 +190,9 @@ const AddTask = (props: propsType) => {
                     </View>
                 </View>
             </ScrollView>
-            <TouchableOpacity style={styles.btn}>
+
+             {/* Save Button */}
+            <TouchableOpacity style={styles.btn} onPress={handleSave}>
                 <Text style={styles.btnText}>{"Save"}</Text>
             </TouchableOpacity>
         </MainLayout>
