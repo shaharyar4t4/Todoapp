@@ -205,7 +205,7 @@ const Home = (props: propsType) => {
         }
     }
     const handleClearAll = async () => {
-        let updated = todos.filter(item => !item.completed); // sirf uncompleted rakhega
+        let updated = todos.filter(item => !item.completed); 
         await AsyncStorage.setItem("todoItem", JSON.stringify(updated));
         setTodos(updated);
         Alert.alert("Success", "All completed tasks cleared!");
