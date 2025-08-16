@@ -70,6 +70,7 @@ const AddTask = (props: propsType) => {
 
                     {/*for the date and time*/}
                     <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 20 }}>
+                       {/*only for date Picker*/}
                         <View >
                             <Text style={styles.label}>Date</Text>
                             <View style={styles.customStyle}>
@@ -87,7 +88,8 @@ const AddTask = (props: propsType) => {
                             display='default'
                             value={fields.date} />
                         }
-                        
+
+                        {/*only for Time Picker*/}
                         <View>
                             <Text style={styles.label}>Time</Text>
                             <View style={styles.customStyle}>
@@ -105,7 +107,6 @@ const AddTask = (props: propsType) => {
                             display='default'
                             value={fields.date} />
                         }
-                        
 
                     </View>
 
