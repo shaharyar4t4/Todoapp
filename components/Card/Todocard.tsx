@@ -9,11 +9,12 @@ import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 type Iprop = PropsWithChildren<{
     item: ITodoItem,
     selectTodoID?: number[],
-    handleSelect?: (id: number) => void
-
+    handleSelect?: (id: number) => void,
+    handleEdit?: (item: ITodoItem) => void,
+    handleDelete?: (id: number) => void
 }>
 
-const Todocard = ({ item, handleSelect, selectTodoID }: Iprop) => {
+const Todocard = ({ item, handleSelect, selectTodoID, handleEdit, handleDelete }: Iprop) => {
     const renderIcon = (key: string): React.ReactElement => {
         switch (key) {
             case 'file':
@@ -36,47 +37,43 @@ const Todocard = ({ item, handleSelect, selectTodoID }: Iprop) => {
     }
 
     return (
-        <View>
+        <TouchableOpacity onPress={() => handleEdit && handleEdit(item)}>
             <View style={[styles.todoItem, { borderBottomWidth: .3, opacity: item?.completed ? 0.5 : 1 }]}>
                 <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
                     {renderIcon(item?.category)}
                     <View>
                         <View style={{ flexDirection: "row", gap: 4, alignItems: "center" }}>
                             <Text style={[styles.title, item?.completed ? styles.disableline : {}]}>{item.title}</Text>
-                            {
-                                item?.notes && 
+                            {item?.notes && 
                                 <TouchableOpacity onPress={() => { Alert.alert("Notes", item.notes) }}>
                                     <MaterialIcons name="speaker-notes" size={24} color="#4A3780" />
                                 </TouchableOpacity>
-                                
                             }
-
                         </View>
                         <View style={{ flexDirection: "row", gap: 10, marginTop: 0 }}>
                             <Text style={[styles.time, item?.completed ? styles.disableline : {}]}>{moment(item.date).format("MMMM DD, YYYY")}</Text>
-
                             <Text style={[styles.time, item?.completed ? styles.disableline : {}]}>{moment(item.time).format("h:mm A")}</Text>
                         </View>
                     </View>
                 </View>
-                <View>
-                    {
-                        item.completed ?
-                            <TouchableOpacity >
-                                <MaterialIcons name="check-box" size={24} color="#4A3780" />
-                            </TouchableOpacity> :
-                            <TouchableOpacity onPress={()=> handleSelect && handleSelect(item?.id)}>
-                                {
-                                    selectTodoID?.includes(item.id) ?
-                                        <MaterialIcons name="check-box" size={24} color="#4A3780" /> :
-                                        <MaterialIcons name="check-box-outline-blank" size={24} color="#4A3780" />
-                                }
-                            </TouchableOpacity>
+                <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+                    {item.completed ?
+                        <TouchableOpacity>
+                            <MaterialIcons name="check-box" size={24} color="#4A3780" />
+                        </TouchableOpacity> :
+                        <TouchableOpacity onPress={() => handleSelect && handleSelect(item?.id)}>
+                            {selectTodoID?.includes(item.id) ?
+                                <MaterialIcons name="check-box" size={24} color="#4A3780" /> :
+                                <MaterialIcons name="check-box-outline-blank" size={24} color="#4A3780" />
+                            }
+                        </TouchableOpacity>
                     }
-
+                    <TouchableOpacity onPress={() => handleDelete && handleDelete(item.id)}>
+                        <MaterialIcons name="delete" size={24} color="red" />
+                    </TouchableOpacity>
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     )
 }
 
@@ -88,7 +85,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         padding: 18,
-
         borderBottomColor: "#c4c4c4"
     },
     iconContainer: {
@@ -105,5 +101,4 @@ const styles = StyleSheet.create({
         color: "#c4c4c4",
         textDecorationLine: "line-through"
     }
-
 });

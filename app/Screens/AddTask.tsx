@@ -7,9 +7,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import moment from 'moment';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { IStackScreen } from '../Navigations/Stack/AllScreen';
+import { ITodoItem } from './Home';
 
 export interface Ifield {
     title: string;
@@ -19,10 +20,13 @@ export interface Ifield {
     time: Date;
 }
 
+
 type propsType = NativeStackScreenProps<IStackScreen, "AddTask">
 
 const AddTask = (props: propsType) => {
-    const { navigation } = props;
+    const { navigation, route } = props;
+    const todo = route.params?.todo as ITodoItem | undefined;
+    
     const [fields, setFields] = useState<Ifield>({
         title: "",
         category: "notes",
@@ -30,53 +34,77 @@ const AddTask = (props: propsType) => {
         date: new Date(),
         time: new Date(),
     });
+
+    useEffect(() => {
+        if (todo) {
+            setFields({
+                title: todo.title,
+                category: todo.category as "goal" | "notes" | "event",
+                notes: todo.notes,
+                date: new Date(todo.date),
+                time: new Date(todo.time),
+            });
+        }
+    }, [todo]);
+
     const handleChange = (key: keyof Ifield, value: string) => {
-        setFields((prev => ({ ...prev, [key]: value }))
-        );
+        setFields((prev => ({ ...prev, [key]: value })));
     }
+
     const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
     const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
-    const handleDateChange = (event:any, selectedDate?: Date) =>{
-        if(selectedDate){
+
+    const handleDateChange = (event: any, selectedDate?: Date) => {
+        if (selectedDate) {
             setFields((prev) => ({ ...prev, date: selectedDate }));
         }
         setShowDatePicker(false);
     }
-      const handleTimeChange = (event:any, selectedTime?:Date) =>{
-        if(selectedTime){
+
+    const handleTimeChange = (event: any, selectedTime?: Date) => {
+        if (selectedTime) {
             setFields((prev) => ({ ...prev, time: selectedTime }));
         }
         setShowTimePicker(false);
     }
-    console.log(fields, ",<--payload");
 
-
-    // save the data in the local storage
-    // show the data which is entered by the user
+    // save or update the data in the local storage
     const handleSave = async () => {
-        if(!fields.title){
+        if (!fields.title) {
             Alert.alert("Error", "Please enter a title for the task");
             return;
         }
-        let todoItem:any = await AsyncStorage.getItem("todoItem");
+        let todoItem: any = await AsyncStorage.getItem("todoItem");
         todoItem = todoItem ? JSON.parse(todoItem) : [];
 
-        let newTodoItem = {
-            id:todoItem?.length +1,
-            title: fields.title,
-            category: fields.category,
-            notes: fields.notes,
-            date: fields.date,
-            time: fields.time,
-            completed: false,
+        if (todo) {
+            // Update existing todo
+            const updatedTodos = todoItem.map((item: ITodoItem) =>
+                item.id === todo.id
+                    ? { ...item, ...fields, date: fields.date.toISOString(), time: fields.time.toISOString() }
+                    : item
+            );
+            await AsyncStorage.setItem("todoItem", JSON.stringify(updatedTodos));
+            Alert.alert("Success", "Task updated!");
+        } else {
+            // Add new todo
+            let newTodoItem = {
+                id: todoItem?.length + 1,
+                title: fields.title,
+                category: fields.category,
+                notes: fields.notes,
+                date: fields.date.toISOString(),
+                time: fields.time.toISOString(),
+                completed: false,
+            };
+            todoItem.unshift(newTodoItem);
+            await AsyncStorage.setItem("todoItem", JSON.stringify(todoItem));
+            Alert.alert("Success", "Task added!");
         }
-        todoItem.unshift(newTodoItem);
 
-        await AsyncStorage.setItem("todoItem", JSON.stringify(todoItem));
         navigation.navigate("Home");
-        
     }
-    
+
     return (
         <MainLayout>
             <View
@@ -90,15 +118,16 @@ const AddTask = (props: propsType) => {
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Entypo name="cross" size={24} color="black" />
                 </TouchableOpacity>
-                <Text style={{ color: '#fff', fontSize: 16, textAlign: "center", fontWeight: "900", alignSelf: "center", verticalAlign: "middle", }}>Add New Task</Text>
+                <Text style={{ color: '#fff', fontSize: 16, textAlign: "center", fontWeight: "900", alignSelf: "center", verticalAlign: "middle" }}>
+                    {todo ? "Edit Task" : "Add New Task"}
+                </Text>
             </View>
             <ScrollView contentContainerStyle={{ minHeight: "100%" }}>
                 <View style={styles.container}>
                     <View style={{ marginTop: 20 }}>
-
-                        {/*for the title */}
                         <Text style={styles.label}>Task Title</Text>
-                        <TextInput style={styles.textInput}
+                        <TextInput
+                            style={styles.textInput}
                             placeholder='Task Title'
                             placeholderTextColor="grey"
                             value={fields.title}
@@ -106,84 +135,70 @@ const AddTask = (props: propsType) => {
                         />
                     </View>
 
-
-                    {/*for the date and time*/}
                     <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 20 }}>
-                       {/*only for date Picker*/}
-                        <View >
+                        <View>
                             <Text style={styles.label}>Date</Text>
                             <View style={styles.customStyle}>
                                 <Text style={styles.customText}>{moment(fields?.date).format("MM/DD/YYYY")}</Text>
-
                                 <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                                     <Entypo name="calendar" size={20} color="#4A3780" />
-
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        {
-                            showDatePicker && <DateTimePicker
-                            mode='date'
-                            display='default'
-                            value={fields.date} 
-                            onChange ={handleDateChange}
-
+                        {showDatePicker && (
+                            <DateTimePicker
+                                mode='date'
+                                display='default'
+                                value={fields.date}
+                                onChange={handleDateChange}
                             />
-                        }
+                        )}
 
-                        {/*only for Time Picker*/}
                         <View>
                             <Text style={styles.label}>Time</Text>
                             <View style={styles.customStyle}>
-                                <Text style={styles.customText}>{moment(fields?.time).format("hh: mm A")}</Text>
+                                <Text style={styles.customText}>{moment(fields?.time).format("hh:mm A")}</Text>
                                 <TouchableOpacity onPress={() => setShowTimePicker(true)}>
                                     <AntDesign name="clockcircleo" size={20} color="#4A3780" />
                                 </TouchableOpacity>
-
                             </View>
                         </View>
-                        {
-                            showTimePicker &&
-                          <DateTimePicker
-                            mode='time'
-                            display='default'
-                            value={fields.date} 
-                            onChange ={handleTimeChange}
+                        {showTimePicker && (
+                            <DateTimePicker
+                                mode='time'
+                                display='default'
+                                value={fields.time}
+                                onChange={handleTimeChange}
                             />
-                            
-                        }
-
+                        )}
                     </View>
 
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-
-                        {/*for the categroy */}
                         <Text style={styles.label}>Category</Text>
                         <TouchableOpacity
                             onPress={() => handleChange('category', 'notes')}
-
                             style={[styles.iconContainer, { backgroundColor: "#DBECF6", borderWidth: 3, borderColor: fields.category === "notes" ? "#4A3780" : "#fff" }]}
                         >
                             <FontAwesome6 name="file-text" size={25} color="#194A66" />
                         </TouchableOpacity>
-
-
                         <TouchableOpacity
                             onPress={() => handleChange('category', 'goal')}
-                            style={[styles.iconContainer, { backgroundColor: "#FEF5D3", borderWidth: 3, borderColor: fields.category === "goal" ? "#4A3780" : "#fff" }]}>
+                            style={[styles.iconContainer, { backgroundColor: "#FEF5D3", borderWidth: 3, borderColor: fields.category === "goal" ? "#4A3780" : "#fff" }]}
+                        >
                             <AntDesign name="Trophy" size={25} color="#403100" />
                         </TouchableOpacity>
                         <TouchableOpacity
                             onPress={() => handleChange('category', 'event')}
-                            style={[styles.iconContainer, { backgroundColor: "#E7E2F3", borderWidth: 3, borderColor: fields.category === "event" ? "#4A3780" : "#fff" }]}>
+                            style={[styles.iconContainer, { backgroundColor: "#E7E2F3", borderWidth: 3, borderColor: fields.category === "event" ? "#4A3780" : "#fff" }]}
+                        >
                             <MaterialIcons name="event" size={25} color="#4A3780" />
                         </TouchableOpacity>
                     </View>
 
-                    {/*for the notes */}
                     <View>
                         <Text style={styles.label}>Notes</Text>
-                        <TextInput style={[styles.textInput, { textAlignVertical: 'top', height: 150 }]}
+                        <TextInput
+                            style={[styles.textInput, { textAlignVertical: 'top', height: 150 }]}
                             placeholder='Notes'
                             placeholderTextColor="grey"
                             multiline
@@ -195,16 +210,15 @@ const AddTask = (props: propsType) => {
                 </View>
             </ScrollView>
 
-             {/* Save Button */}
             <TouchableOpacity style={styles.btn} onPress={handleSave}>
-                <Text style={styles.btnText}>{"Save"}</Text>
+                <Text style={styles.btnText}>{todo ? "Update" : "Save"}</Text>
             </TouchableOpacity>
         </MainLayout>
-
     )
 }
 
 export default AddTask
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -228,10 +242,7 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         backgroundColor: "#fff",
         fontSize: 16
-
-
     },
-
     btn: {
         backgroundColor: "#4A3780",
         position: "absolute",
@@ -247,7 +258,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold"
     },
-
     customStyle: {
         flexDirection: "row",
         alignItems: "center",
@@ -265,5 +275,4 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: "#000"
     }
-
 })

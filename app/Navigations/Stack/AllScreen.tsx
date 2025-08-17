@@ -1,10 +1,10 @@
 import AddTask from '@/app/Screens/AddTask';
-import Home from '@/app/Screens/Home';
+import Home, { ITodoItem } from '@/app/Screens/Home';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 export type IStackScreen = {
-  Home: undefined,
-  AddTask:undefined,
+ Home: undefined;
+  AddTask: { todo?: ITodoItem };
 }
 const Stack = createNativeStackNavigator<IStackScreen>();
 const AllScreen = () => {

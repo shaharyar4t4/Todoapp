@@ -9,6 +9,8 @@ import { IStackScreen } from '../Navigations/Stack/AllScreen';
 
 type propsType = NativeStackScreenProps<IStackScreen, "Home">
 
+
+
 export interface ITodoItem {
     id: number;
     title: string;
@@ -18,7 +20,6 @@ export interface ITodoItem {
     notes: string;
     completed: boolean;
 }
-
 
 const data = [
     {
@@ -204,6 +205,7 @@ const Home = (props: propsType) => {
             setSelectTodoID([]);
         }
     }
+
     const handleClearAll = async () => {
         let updated = todos.filter(item => !item.completed); 
         await AsyncStorage.setItem("todoItem", JSON.stringify(updated));
@@ -211,7 +213,29 @@ const Home = (props: propsType) => {
         Alert.alert("Success", "All completed tasks cleared!");
     };
 
+    const handleEdit = (item: ITodoItem) => {
+        navigation.navigate("AddTask", { todo: item });
+    };
 
+    const handleDelete = async (id: number) => {
+        Alert.alert(
+            "Delete Task",
+            "Are you sure you want to delete this task?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Delete",
+                    style: "destructive",
+                    onPress: async () => {
+                        let updated = todos.filter(item => item.id !== id);
+                        await AsyncStorage.setItem("todoItem", JSON.stringify(updated));
+                        setTodos(updated);
+                        Alert.alert("Success", "Task deleted!");
+                    }
+                }
+            ]
+        );
+    };
 
     return (
         <PageLayout>
@@ -236,13 +260,16 @@ const Home = (props: propsType) => {
                                 data={todos?.filter(x => x?.completed == false)}
                                 keyExtractor={(item) => item.id.toString()}
                                 renderItem={({ item }) =>
-                                    <Todocard item={item} selectTodoID={selectTodoID} handleSelect={handleSelect} />
+                                    <Todocard 
+                                        item={item} 
+                                        selectTodoID={selectTodoID} 
+                                        handleSelect={handleSelect} 
+                                        handleEdit={handleEdit}
+                                        handleDelete={handleDelete}
+                                    />
                                 }
-
                             />
-
                         </View>
-
 
                         <View style={{ flexDirection: "row", paddingVertical: 15, justifyContent: "space-between" }}>
                             <Text style={{ fontWeight: "bold", fontSize: 16, letterSpacing: .6, }}>
@@ -255,13 +282,16 @@ const Home = (props: propsType) => {
                             </TouchableOpacity>
                         </View>
 
-
                         <View style={styles.todoContainer}>
                             <FlatList
                                 data={todos?.filter(x => x?.completed)}
                                 keyExtractor={(item) => item.id.toString()}
                                 renderItem={({ item }) =>
-                                    <Todocard item={item} />
+                                    <Todocard 
+                                        item={item} 
+                                        handleEdit={handleEdit}
+                                        handleDelete={handleDelete}
+                                    />
                                 }
                             />
                         </View>
@@ -274,11 +304,10 @@ const Home = (props: propsType) => {
                     ? <TouchableOpacity style={styles.btn} onPress={handlecompleteTask}>
                         <Text style={styles.btnText}>Mark as a Complete</Text>
                     </TouchableOpacity>
-                    : <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("AddTask")}>
+                    : <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate({ name: "AddTask", params: {} })}>
                         <Text style={styles.btnText}>Add New Task</Text>
                     </TouchableOpacity>
             }
-
         </PageLayout>
     )
 }
@@ -293,15 +322,12 @@ const styles = StyleSheet.create({
     },
     main: {
         top: -70,
-
     },
     todoContainer: {
         backgroundColor: "#fff",
         zIndex: 20,
         borderRadius: 15,
-        // height:300
     },
-
     btn: {
         backgroundColor: "#4A3780",
         position: "absolute",
@@ -317,23 +343,4 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold"
     },
-    //    todoItem: {
-    //     flexDirection: "row",
-    //     alignItems: "center",
-    //     justifyContent: "space-between",
-    //     padding: 18,
-
-    //     borderBottomColor: "#c4c4c4"
-    // },
-    //  iconContainer: {
-    //     width: 50, height: 50, borderRadius: "50%", alignItems: "center", justifyContent: "center",
-    // },
-    // title: {
-    //     fontWeight: "bold",
-    //     fontSize: 16
-    // },
-    // time: {
-    //     fontSize: 14
-    // },
-
 })
